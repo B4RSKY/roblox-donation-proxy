@@ -9,9 +9,13 @@ let lastSentIndex = 0;
 
 console.log('[START] Donation server started');
 
-// ========== WEBHOOK DARI BAGIBAGI ==========
+// ========== RUTE UTAMA (Mencegah Error di Browser) ==========
+app.get('/', (req, res) => {
+    res.send('Server Proxy Saweria-Roblox Aktif dan Berjalan!');
+});
 
-app.post('/webhook', (req, res) => {
+// ========== WEBHOOK DARI SAWERIA ==========
+app.post('/saweria-webhook', (req, res) => {
     console.log('='.repeat(60));
     console.log('[WEBHOOK] Donation received!');
     console.log('[WEBHOOK] Name:', req.body.name);
@@ -28,11 +32,10 @@ app.post('/webhook', (req, res) => {
     console.log('[WEBHOOK] Total donations:', allDonations.length);
     console.log('='.repeat(60));
     
-    res.json({ success: true });
+    res.status(200).send("OK");
 });
 
 // ========== CHECK DONASI UNTUK ROBLOX ==========
-
 app.get('/check-donations', (req, res) => {
     console.log('[CHECK] Roblox checking...');
     console.log('[CHECK] Total donations:', allDonations.length);
@@ -59,7 +62,6 @@ app.get('/check-donations', (req, res) => {
 });
 
 // ========== STATUS ENDPOINT ==========
-
 app.get('/status', (req, res) => {
     res.json({
         status: 'running',
@@ -71,13 +73,12 @@ app.get('/status', (req, res) => {
 });
 
 // ========== START SERVER ==========
-
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log('='.repeat(60));
     console.log(`[SERVER] ✅ Running on port ${PORT}`);
     console.log('[SERVER] Endpoints:');
-    console.log('[SERVER]   POST /webhook - Receive from BagiBagi');
+    console.log('[SERVER]   POST /saweria-webhook - Receive from Saweria');
     console.log('[SERVER]   GET /check-donations - Check by Roblox');
     console.log('[SERVER]   GET /status - Check queue status');
     console.log('='.repeat(60));
