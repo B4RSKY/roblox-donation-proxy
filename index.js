@@ -18,14 +18,20 @@ app.get('/', (req, res) => {
 app.post('/saweria-webhook', (req, res) => {
     console.log('='.repeat(60));
     console.log('[WEBHOOK] Donation received!');
-    console.log('[WEBHOOK] Name:', req.body.name);
-    console.log('[WEBHOOK] Amount:', req.body.amount);
-    console.log('[WEBHOOK] Message:', req.body.message);
+    
+    // Deteksi otomatis: Mengambil dari format Saweria (donator_name) ATAU format cURL testing (name)
+    const donorName = req.body.donator_name || req.body.name || 'Donatur';
+    const amountRaw = req.body.amount_raw || req.body.amount || 0;
+    const donorMsg = req.body.message || '';
+
+    console.log('[WEBHOOK] Name:', donorName);
+    console.log('[WEBHOOK] Amount:', amountRaw);
+    console.log('[WEBHOOK] Message:', donorMsg);
     
     allDonations.push({
-        name: req.body.name || 'Donatur',
-        amount: req.body.amount || 0,
-        message: req.body.message || '',
+        name: donorName,
+        amount: amountRaw,
+        message: donorMsg,
         timestamp: new Date().toISOString()
     });
     
