@@ -3,23 +3,18 @@ const app = express();
 
 app.use(express.json());
 
-// Store semua donasi
 let allDonations = [];
 let lastSentIndex = 0;
 
-console.log('[START] Donation server started');
-
-// ========== RUTE UTAMA (Mencegah Error di Browser) ==========
 app.get('/', (req, res) => {
-    res.send('Server Proxy Saweria-Roblox Aktif dan Berjalan!');
+    res.send('Server Proxy Saweria-Roblox Aktif');
 });
 
-// ========== WEBHOOK DARI SAWERIA ==========
+// hook dari saweria
 app.post('/saweria-webhook', (req, res) => {
     console.log('='.repeat(60));
     console.log('[WEBHOOK] Donation received!');
     
-    // Deteksi otomatis: Mengambil dari format Saweria (donator_name) ATAU format cURL testing (name)
     const donorName = req.body.donator_name || req.body.name || 'Donatur';
     const amountRaw = req.body.amount_raw || req.body.amount || 0;
     const donorMsg = req.body.message || '';
@@ -41,7 +36,7 @@ app.post('/saweria-webhook', (req, res) => {
     res.status(200).send("OK");
 });
 
-// ========== CHECK DONASI UNTUK ROBLOX ==========
+// donation check roblox
 app.get('/check-donations', (req, res) => {
     console.log('[CHECK] Roblox checking...');
     console.log('[CHECK] Total donations:', allDonations.length);
@@ -51,7 +46,7 @@ app.get('/check-donations', (req, res) => {
         const donation = allDonations[lastSentIndex];
         lastSentIndex++;
         
-        console.log('[CHECK] ✅ Sending donation #' + lastSentIndex);
+        console.log('[CHECK] Sending donation #' + lastSentIndex);
         console.log('[CHECK] Donor:', donation.name);
         console.log('[CHECK] Amount:', donation.amount);
         
@@ -62,12 +57,11 @@ app.get('/check-donations', (req, res) => {
             message: donation.message
         });
     } else {
-        console.log('[CHECK] ❌ No new donations');
+        console.log('[CHECK] no new donations');
         res.json({ hasNewDonation: false });
     }
 });
 
-// ========== STATUS ENDPOINT ==========
 app.get('/status', (req, res) => {
     res.json({
         status: 'running',
@@ -78,11 +72,10 @@ app.get('/status', (req, res) => {
     });
 });
 
-// ========== START SERVER ==========
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log('='.repeat(60));
-    console.log(`[SERVER] ✅ Running on port ${PORT}`);
+    console.log(`[SERVER] Running on port ${PORT}`);
     console.log('[SERVER] Endpoints:');
     console.log('[SERVER]   POST /saweria-webhook - Receive from Saweria');
     console.log('[SERVER]   GET /check-donations - Check by Roblox');
